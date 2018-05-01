@@ -24,8 +24,8 @@ lazy val runtimeErrors =
   project.in(file("runtimeErrors"))
     .settings(libraryDependencies ++= Seq(catsCore))
 
-lazy val typedInfix =
-  project.in(file("typedInfix"))
+lazy val typedReified =
+  project.in(file("typedReified"))
     .settings(libraryDependencies ++= Seq(catsCore))
 
 lazy val exprMonad =
@@ -43,7 +43,7 @@ lazy val root =
       standalone,
       reified,
       runtimeErrors,
-      typedInfix,
+      typedReified,
       exprMonad,
       freeMonad,
     )
