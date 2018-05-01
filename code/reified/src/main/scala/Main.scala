@@ -31,10 +31,9 @@ object Interpreter {
       case Multiply(a, b) => eval(a) * eval(b)
     }
 
-  import scala.concurrent.Future
-  import scala.concurrent.ExecutionContext.Implicits.global
+  import scala.concurrent.{Future, ExecutionContext}
 
-  def evalAsync(program: Expr): Future[Int] =
+  def evalAsync(program: Expr)(implicit ec: ExecutionContext): Future[Int] =
     program match {
       case Literal(n) =>
         Future.successful(n)

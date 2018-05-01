@@ -55,10 +55,9 @@ object Interpreter {
         eval(f(eval(a)))
     }
 
-  import scala.concurrent.Future
-  import scala.concurrent.ExecutionContext.Implicits.global
+  import scala.concurrent.{Future, ExecutionContext}
 
-  def evalAsync[A](program: Expr[A]): Future[A] =
+  def evalAsync[A](program: Expr[A])(implicit ec: ExecutionContext): Future[A] =
     program match {
       case Pure(v) =>
         Future.successful(v)
