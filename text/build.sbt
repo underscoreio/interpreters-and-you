@@ -1,12 +1,4 @@
-lazy val root = project.in(file("."))
-  .settings(tutSettings)
-
-tutSourceDirectory := sourceDirectory.value / "pages"
-
-tutTargetDirectory := target.value / "pages"
-
-scalaOrganization in ThisBuild := "org.typelevel"
-scalaVersion in ThisBuild := "2.12.1"
+scalaVersion in ThisBuild := "2.12.4"
 
 scalacOptions ++= Seq(
   "-deprecation",                      // Emit warning and location for usages of deprecated APIs.
@@ -58,22 +50,28 @@ scalacOptions ++= Seq(
 
 resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"))
 
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
+
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M11" cross CrossVersion.full)
+
 libraryDependencies ++= Seq(
   "com.lihaoyi"   %% "fastparse"  % "1.0.0",
-  "io.frees"      %% "frees-core" % "0.8.0",
   "org.typelevel" %% "cats-core"  % "1.1.0",
   "org.typelevel" %% "cats-free"  % "1.1.0",
 )
 
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")
+enablePlugins(TutPlugin)
 
-addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
+tutSourceDirectory := sourceDirectory.value / "pages"
+
+tutTargetDirectory := target.value / "pages"
 
 lazy val pdf  = taskKey[Unit]("Build the PDF version of the book")
 lazy val html = taskKey[Unit]("Build the HTML version of the book")
 lazy val epub = taskKey[Unit]("Build the ePub version of the book")
 lazy val all  = taskKey[Unit]("Build all versions of the book")
 
+import scala.sys.process._
 pdf  := { tutQuick.value ; "grunt pdf".!  }
 html := { tutQuick.value ; "grunt html".! }
 epub := { tutQuick.value ; "grunt epub".! }
