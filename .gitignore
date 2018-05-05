@@ -199,3 +199,21 @@ tags
 
 
 # End of https://www.gitignore.io/api/scala,sbt,sublimetext,intellij,emacs,vim
+_site/*
+_theme_packages/*
+
+Thumbs.db
+.DS_Store
+
+!.gitkeep
+
+.rbenv-version
+.rvmrc
+bower_components/
+dist/
+node_modules/
+
+*.sublime-workspace
+
+target/ 
+project/target
