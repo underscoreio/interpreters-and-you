@@ -5,26 +5,9 @@ final case class Lit[A](value: A) extends Expr[A]
 final case class Lt(a: Expr[Int], b: Expr[Int]) extends Expr[Boolean]
 final case class And(a: Expr[Boolean], b: Expr[Boolean]) extends Expr[Boolean]
 
-object Syntax {
-  def lit[A](a: A): Expr[A] =
-    Lit(a)
-
-  implicit class IntExprOps(val a: Expr[Int]) extends AnyVal {
-    def < (b: Expr[Int]): Expr[Boolean] =
-      Lt(a, b)
-  }
-
-  implicit class BoolExprOps(val a: Expr[Boolean]) extends AnyVal {
-    def && (b: Expr[Boolean]): Expr[Boolean] =
-      And(a, b)
-  }
-}
-
 object Program {
-  import Syntax._
-
   val program: Expr[Boolean] =
-    lit(1) < lit(2) && lit(3) < lit(4)
+    And(Lt(Lit(1), Lit(2)), Lt(Lit(3), Lit(4)))
 }
 
 object Interpreter {

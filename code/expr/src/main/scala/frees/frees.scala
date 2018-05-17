@@ -2,54 +2,35 @@ package frees
 
 import freestyle.free._
 
-@free trait Exprs {
+@free trait ExprAlg {
   def lit[A](value: A): FS[A]
+
   def lt(a: Int, b: Int): FS[Boolean]
+
   def and(a: Boolean, b: Boolean): FS[Boolean]
 }
 
-// object Syntax {
-//   import cats.free.Free
-
-//   type Expr[A] = Free[Exprs, A]
-
-//   def lit[A](value: A): Expr[A] =
-//     Free.liftF[Exprs, A](Lit(value))
-
-//   def lt(a: Int, b: Int): Expr[Boolean] =
-//     Free.liftF[Exprs, Boolean](Lt(a, b))
-
-//   def and(a: Boolean, b: Boolean): Expr[Boolean] =
-//     Free.liftF[Exprs, Boolean](And(a, b))
-
-//   implicit class IntExprOps(val a: Expr[Int]) extends AnyVal {
-//     def < (b: Expr[Int]): Expr[Boolean] =
-//       a.flatMap(x => b.flatMap(y => lt(x, y)))
-//   }
-
-//   implicit class BooleanExprOps(val a: Expr[Boolean]) extends AnyVal {
-//     def && (b: Expr[Boolean]): Expr[Boolean] =
-//       a.flatMap(x => b.flatMap(y => and(x, y)))
-//   }
-// }
-
 object Program {
-  def program[F[_]](implicit exprs: Exprs[F]) = for {
-    a <- exprs.lit(1)
-    b <- exprs.lit(2)
-    x <- exprs.lt(a, b)
-    c <- exprs.lit(3)
-    d <- exprs.lit(4)
-    y <- exprs.lt(c, d)
-    z <- exprs.and(x, y)
-  } yield z
+  def program[F[_]](implicit expr: ExprAlg[F]) = {
+    import expr._
+
+    for {
+      a <- lit(1)
+      b <- lit(2)
+      x <- lt(a, b)
+      c <- lit(3)
+      d <- lit(4)
+      y <- lt(c, d)
+      z <- and(x, y)
+    } yield z
+  }
 }
 
 object Interpreter {
   import cats.Id
 
-  implicit val idHandler: Exprs.Handler[Id] =
-    new Exprs.Handler[Id] {
+  implicit val idHandler: ExprAlg.Handler[Id] =
+    new ExprAlg.Handler[Id] {
       override def lit[A](a: A): Id[A] =
         a
 
@@ -60,8 +41,8 @@ object Interpreter {
         a && b
     }
 
-  implicit val eitherHandler: Exprs.Handler[Either[String, ?]] =
-    new Exprs.Handler[Either[String, ?]] {
+  implicit val eitherHandler: ExprAlg.Handler[Either[String, ?]] =
+    new ExprAlg.Handler[Either[String, ?]] {
       override def lit[A](a: A): Either[String, A] =
         Right(a)
 
