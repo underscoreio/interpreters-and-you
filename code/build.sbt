@@ -1,5 +1,17 @@
 scalaVersion in ThisBuild := "2.12.4"
 
+libraryDependencies ++= Seq(
+  "com.lihaoyi"   %% "fastparse"  % "1.0.0",
+  "io.frees"      %% "frees-core" % "0.8.0",
+  "org.typelevel" %% "cats-core"  % "1.1.0",
+  "org.typelevel" %% "cats-free"  % "1.1.0",
+)
+
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")
+
+// Freestyle requires Macro Paradise:
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
+
 scalacOptions in ThisBuild ++= Seq(
   "-deprecation",                      // Emit warning and location for usages of deprecated APIs.
   "-encoding", "utf-8",                // Specify character encoding used by source files.
@@ -47,20 +59,3 @@ scalacOptions in ThisBuild ++= Seq(
   "-Ywarn-unused:privates",            // Warn if a private member is unused.
   "-Ywarn-value-discard"               // Warn when non-Unit expression results are unused.
 )
-
-lazy val commonSettings =
-  Seq(
-    libraryDependencies ++= Seq(
-      "com.lihaoyi"   %% "fastparse"  % "1.0.0",
-      "io.frees"      %% "frees-core" % "0.8.0",
-      "org.typelevel" %% "cats-core"  % "1.1.0",
-      "org.typelevel" %% "cats-free"  % "1.1.0",
-    ),
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4"),
-    // Freestyle requires Macro Paradise:
-    addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full),
-  )
-
-lazy val calc = project.in(file("calc")).settings(commonSettings)
-lazy val expr = project.in(file("expr")).settings(commonSettings)
-lazy val root = project.in(file(".")).aggregate(calc, expr)

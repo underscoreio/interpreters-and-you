@@ -13,18 +13,48 @@ object Program {
 object Interpreter {
   def eval[A](program: Expr[A]): A =
     program match {
-      case Lit(v)    => v
-      case Lt(a, b)  => eval(a) < eval(b)
-      case And(a, b) => eval(a) && eval(b)
+      case Lit(v) =>
+        v
+
+      case Lt(a, b) =>
+        eval(a) < eval(b)
+
+      case And(a, b) =>
+        eval(a) && eval(b)
+    }
+}
+
+object AsyncInterpreter {
+  import scala.concurrent.{Future, ExecutionContext}
+
+  def eval[A](program: Expr[A])(implicit ec: ExecutionContext): Future[A] =
+    program match {
+      case Lit(v) =>
+        Future.successful(v)
+
+      case Lt(a, b) =>
+        val x = eval(a)
+        val y = eval(b)
+        x.flatMap(a => y.map(b => a < b))
+
+      case And(a, b) =>
+        val x = eval(a)
+        val y = eval(b)
+        x.flatMap(a => y.map(b => a && b))
     }
 }
 
 object PrettyPrinter {
   def print[A](program: Expr[A]): String =
     program match {
-      case Lit(v)    => v.toString
-      case Lt(a, b)  => s"${print(a)} < ${print(b)}"
-      case And(a, b) => s"${print(a)} && ${print(b)}"
+      case Lit(v) =>
+        v.toString
+
+      case Lt(a, b) =>
+        s"${print(a)} < ${print(b)}"
+
+      case And(a, b) =>
+        s"${print(a)} && ${print(b)}"
     }
 }
 
@@ -48,8 +78,11 @@ object Simplifier {
 object Main extends App {
   import Program._
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   println("Program: " + program)
   println("Result: " + Interpreter.eval(program))
+  println("Async result: " + AsyncInterpreter.eval(program))
   println("Printed: " + PrettyPrinter.print(program))
   println("Simplified: " + Simplifier.simplify(program))
 }
