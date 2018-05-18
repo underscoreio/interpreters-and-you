@@ -2,59 +2,99 @@
 
 General-purpose programming languages provide generality,
 which is both an advantage and a disadvantage.
-However, if we're trying to solve a specific problem
-in a specific domain it sometimes helps to remove the generality
-and work with a limited set of high-level primitives.
+While we can adapt them to any task,
+we often have to lay groundwork to achieve those tasks
+in the form of libraries and implementation details.
+If we're trying to solve problems in a specific domain
+it sometimes helps to remove the generality
+and work with a language with a
+limited set of high-level primitives.
 We call this a *Domain Specific Language (DSL)*,
-which we embed inside a general purpose *host language*.
-Working with DSLs involves splitting code into two halves:
+which we embed inside our general purpose *host language*.
+
+There is a lot of overlap between creating DSLs and libraries.
+The characteristic feature of using a DSL is that
+we split our codebase into two halves:
 
 1. Write a "program" using the DSL that
-   represents the code we want to run.
+   represents a set of steps we want to run.
 
-2. Feed the program to an *interpreter*---a function that
+2. Run the program to an *interpreter*.
+   This is typically a function that
    accepts a program as input and produces a useful result.
 
-The program in step 1 simply represents
+The programs in step 1 represent
 the *structure* of the computation we want to run.
-We leave underlying details to the interpreter.
-This approach gives us a number of advantages:
+However, they don't do any work on their own.
+To do work we have to run the program through an interpreter,
+which provides implementations for each step
+and handles underlying complexities and implementation details.
 
-- Our DSL is simpler than a general purpose programming language,
-  making it easier for us to build programs within the DSL's domain.
+## Modularity and reuse
 
-- The interpreter takes care of messy underlying complexities.
-  We can re-use the same interpreter to run different programs.
+Splitting a codebase into programs and interpreters
+offers a number of benefits in terms of
+the modularity of our codebase:
 
-- We can invent different *syntaxes* to simplify writing
-  different types of programs.
+- Our interpreter takes care of implementation details,
+  making programs easier to write.
+  We can re-use our DSL to reduce
+  the overall complexity of our codebase.
 
 - We can invent different interpreters
   to execute programs in different ways.
-  For example to compute different results
-  or handle different effects.
+  Examples include: pretty printing expressions,
+  estimating the length or runtime of a program,
+  explaining a result as we calculate it,
+  and performing on-the-fly optimisation and caching.
+  We can write different interpreters
+  that abstract over different effects:
+  synchronous versus asynchronous computation,
+  different kinds of error handling,
+  interpreters optimised for unit testing,
+  and so on.
+
+- We can invent different syntaxes for writing programs.
+  These syntaxes can be *standalone*,
+  with complete parsers and external tooling,
+  or *embedded* as libraries in our host language.
+  Embedding allows us to re-use aspects of the host language
+  such as variable definitions, types, and scoping rules.
+  Embedding DSLs makes them feasible to implement,
+  even as part of a commercial programming project
+  with a tight deadline.
 
 The general pattern looks like this:
 
 ```
-Input syntax 1 --\                /--> Interpreter 1 --> Result 1
-                  \      DSL     /
-Input syntax 2 ------> Program ------> Interpreter 2 --> Result 2
-                  /              \
-Input syntax 3 --/                \--> Interpreter 3 --> Result 3
+Syntax 1 --\                /--> Interpreter 1 --> Result 1
+            \      DSL     /
+Syntax 2 ------> Program ------> Interpreter 2 --> Result 2
+            /              \
+Syntax 3 --/                \--> Interpreter 3 --> Result 3
 ```
 
-The interpreter pattern can also open up a number of advantages
-in terms of inspectability of code.
-By limiting the expressiveness of the DSL,
-we increase our ability to reason about programs in our interpreter.
+## Inspecting and modifying programs
+
+If we design our DSL carefully,
+we open up options for inspecting and rewriting programs.
+We can produce interpreters that consume one program
+and output another, either in the same DSL or in another.
+These interpreters are called *compilers*
+(or "transpilers" in some circles):
+
+```
+Program 1 -----> Compiler -----> Program 2
+```
+
+## Constraints liberate, liberty constrains
+
+Programs are easier to inspect and modify
+if they are built from simple components.
+The more flexible our DSL,
+the harder it becomes to reason about.
 As a [wise man once said](link-runar-constraints),
 "constraints liberate, liberty constrains".
-If we plan correctly we can write *compilers*
-that change the structure of programs
-to make them more efficient or to handle additional complexities.
-In some cases we can even serialize programs
-to save them for later or run them outside of our host language.
 
 ## A calculated example
 
