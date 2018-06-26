@@ -1,0 +1,3 @@
+#!/bin/sh
+pt=../text/src/pages
+cat $pt/interpreters.md $pt/links.md $pt/solutions.md > combine.md
