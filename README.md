@@ -14,6 +14,9 @@ Code samples licensed [Apache 2.0][code-license]
 
 The `/slides` directory contains the slides used in my presentation at Scala Days 2018.
 
+- [Scala Days 2018 Berlin - Dave](https://github.com/underscoreio/interpreters-and-you/blob/master/slides/interpreters-and-you.key)
+- [Scala Days 2018 New York - Mark](https://github.com/mmynsted/interpreters-and-you/blob/master/slides/interpreters-and-you.key)
+
 The `/code` directory contains different sample interpreters, implemented in reified and Church encoded styles.
 
 The `/text` directory contains a short guide to writing interpreters in Scala. This is currently a work-in-progress that I hope to flesh out to cover the same content as the talk.
